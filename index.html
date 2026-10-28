@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Perishable Order Form – By Focus Prism</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4f8;--card:#fff;--ink:#1d1b22;--mut:#6b6674;--line:#e3dfe8;--acc:#7b2cbf;--hd:#d8a7c0;--sec:#cfe0e3;--inp:#faf9fb}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15131a;--card:#201d27;--ink:#f1eef5;--mut:#a39dae;--line:#383344;--acc:#b77cf0;--hd:#5a3a52;--sec:#2b3d42;--inp:#191720}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:14px}
+.head{display:flex;align-items:center;gap:14px;background:var(--hd);border-radius:14px;padding:12px 16px}
+.head img{width:64px;height:64px;border-radius:10px;background:#fff}.head h1{font-size:18px;margin:0}.head p{margin:2px 0 0;color:var(--mut);font-size:13px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:3px;font-weight:600}
+input{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(--line);border-radius:8px;padding:8px;width:100%;min-width:0}
+input:focus{outline:2px solid var(--acc);outline-offset:0}input[readonly]{opacity:.8}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.sh{display:flex;gap:8px;align-items:center;background:var(--sec);padding:8px 10px}.sh input{font-weight:700;background:transparent;border-color:transparent;flex:1}
+.sh input:focus{background:var(--inp)}
+.row{display:grid;grid-template-columns:30px 1fr 74px 74px 30px;gap:6px;align-items:center;padding:4px 10px}
+.row.cols{font-size:11px;color:var(--mut);font-weight:700;padding-top:8px}.n{color:var(--mut);font-size:12px;text-align:right}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 11px}
+button.p{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}button.x{padding:2px 8px;color:var(--mut)}
+.add{margin:6px 10px 10px}.bar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.sign{margin:22px 4px;color:var(--mut);font-size:13px}.sign div{border-top:1px solid var(--mut);width:200px;padding-top:4px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:20px;display:none;font-size:14px}
+@media(max-width:480px){.row{grid-template-columns:24px 1fr 60px 60px 26px}}
+.sh select{font:inherit;color:var(--ink);background:var(--inp);border:1px solid var(--line);border-radius:8px;padding:6px}
+#pr{display:none}
+@media print{@page{size:A4 portrait;margin:7mm}html,body{background:#fff!important;color:#000!important;padding:0!important}.wrap,.toast{display:none!important}#pr{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact;font:9px/1.15 Arial,sans-serif;color:#000}
+#pr table{width:100%;border-collapse:collapse;table-layout:fixed}#pr td,#pr th{border:1px solid #444;padding:1.5px 3px;height:13px;overflow:hidden;white-space:nowrap}
+#pr thead{display:table-header-group}#pr tr{break-inside:avoid}#pr .pk{background:#d8a7c0;font-weight:700}#pr .bg{background:#ddd9c3;font-weight:700;text-align:center}#pr .tl{background:#cbdce0;font-weight:700;text-align:center}#pr .c{text-align:center}
+#pr .top{display:flex;align-items:center;gap:8px;background:#d8a7c0;border:1px solid #444;border-bottom:0;padding:4px 6px}#pr .top img{width:38px;height:38px}#pr .top b{font-size:15px}
+#pr .ft{margin-top:14px;font-size:10px}#pr .ft div{border-top:1px solid #000;width:180px;padding-top:2px}}
+</style></head><body><div class="wrap">
+<div class="head"><img alt="Focus Prism logo" src="logo.png"><div><h1>By Focus Prism</h1><p>Perishable Order Sheet – Requisition Form</p></div></div>
+<div class="meta">
+<div><label>Date of requisition</label><input id="reqd" readonly></div>
+<div><label>Department</label><input id="dept" value="MAIN KITCHEN"></div>
+<div><label>Latest to delivery (date)</label><input id="deld" type="date"></div></div>
+<div id="secs"></div>
+<div class="bar"><button id="addsec">+ Add section</button><button class="p" id="xl">Export to Excel</button><button id="rs">Reset layout</button><button id="pt">Print</button><button id="sv">Save form to device</button><button id="ld">Open saved form</button><input id="lf" type="file" accept=".json" hidden></div>
+<div class="sign"><div>Approved By<br><b>Executive Chef</b></div></div></div><div id="pr"></div><div class="toast" id="t"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script>
+const D={"Vegetables":"Banana Leaves,Beans,Beet Root,Brinjal Big,Brinjal Small,Cabbage,Carrot,Coriander Leaves,Cucumber,Curry Leaf,Garlic,Ginger,Green Capsicum,Green Chillies,Lemon Yellow,Onion Big,Palak,Potato,Raddish White,Raw Mango,Spring Onion,Tomato Bangalore,Tomato Local",
+"Herbs":"Parsley,Basil,Rosemary,Thyme,Sage,Dill,Micro Greens,Beetroot Leaf","Fruits":"Pomegranate,Blue Berry,Strawberry,Red Grapes Seedless,Banana Yellow",
+"Frozen":"Green Peas,McCain French Fries,V Crispies,Edamame Seeds,Green Peas,American Corn,Hash Brown","Dairy Products":"Milk,Paneer,Curd,Cooking Cream",
+"Frozen Non Veg":"Pepperoni,Chicken Ham,Chicken Salami,Smoked Salmon,Chicken Sausage,Norwegian Salmon Fillet","Fuel":"Gas Cylinder","Mangoes":"Himmat",
+"English Vegetables":"Asparagus,Avocado Ripe (IMP),Bell Pepper Red,Bell Pepper Yellow,Broccoli,Celery,Cherry Tomato,Chinese Cabbage,Chives,Edible Flower,European Cucumber,Fresh Mushrooms,Leeks,Lettuce Arugula,Lettuce Green,Lettuce Ice Berg,Lettuce Lollo Rosso,Lettuce Romaine,Lotus Stem,Pokchoi,Red Cabbage,Red Raddish,Zucchini Green,Zucchini Yellow",
+"Chinese":"Bean Sprouts,Galangal,Lemon Grass,Peeled Garlic,Thai Red Chilli,Tofu","Highly Perishable NV":"Chicken Breast,Chicken Leg,Chicken Curry Cut Staff,Chicken Whole With Skin,Skinless Chicken Whole,Chicken Wings,Mutton Boneless,Eggs,Basha Fish,Prawn 16-20 Count,Prawn 80-100 Count,Squid",
+"Cheese":"Bocconcini,Cheddar,Cheese Slice Cheddar,Feta,Fresh Mozzarella,Haloumi Cheese,Mozzarella Amul Dice,Parmesan,Processed Amul Cheese,Ricotta,Yellow Cheddar",
+"Staff Cafeteria":"Aloo,Bacchalkura,Bhindi,Cabbage,Cauliflower,Coriander,Curd,Donda,Eggs,Garlic,Ginger,Gongura,Green Chilli,Lauki,Local Tomato,Milk,Onion Big,Palak,Paneer,Parval,Red Pumpkin,Beerakai,Turai"};
+const DL={save:async({filename,data})=>{const a=document.createElement("a");a.href=URL.createObjectURL(data);a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}};
+const logoData=()=>{const i=document.querySelector(".head img"),c=document.createElement("canvas");c.width=i.naturalWidth;c.height=i.naturalHeight;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(i,0,0);return c.toDataURL("image/jpeg",.85)};
+const K="fp-order-v1";let S=null;
+const def=()=>Object.entries(D).map(([n,v],i)=>({name:n,side:i<8?"L":"R",rows:v.split(",").map(x=>({i:x,h:"",r:""}))}));
+try{S=JSON.parse(localStorage.getItem(K))}catch(e){}if(!Array.isArray(S))S=def();
+const norm=(x,i)=>{if(!x.side)x.side=i<8?"L":"R"};S.forEach(norm);
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const td=new Date(),iso=new Date(td.getTime()-td.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+$("reqd").value=td.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});$("deld").min=iso;$("deld").value=iso;
+function toast(m){const t=$("t");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2600)}
+function el(tag,a,...c){const e=document.createElement(tag);Object.assign(e,a||{});c.forEach(x=>e.append(x));return e}
+function render(){const root=$("secs");root.textContent="";let n=0;
+S.forEach((s,si)=>{const sec=el("div",{className:"sec"});
+const name=el("input",{value:s.name,placeholder:"Section name"});name.oninput=()=>{s.name=name.value;save()};
+const del=el("button",{className:"x",title:"Delete section",textContent:"✕"});del.onclick=()=>{if(confirm("Delete section “"+s.name+"”?")){S.splice(si,1);save();render()}};
+const sd=el("select",{title:"Column in printed sheet"},el("option",{value:"L",textContent:"Left column"}),el("option",{value:"R",textContent:"Right column"}));sd.value=s.side||"L";sd.onchange=()=>{s.side=sd.value;save()};
+sec.append(el("div",{className:"sh"},name,sd,del));
+const c=el("div",{className:"row cols"},el("span"),el("span",{textContent:"Item"}),el("span",{textContent:"Qty in hand"}),el("span",{textContent:"Qty req."}),el("span"));sec.append(c);
+s.rows.forEach((r,ri)=>{n++;const a=el("input",{value:r.i,placeholder:"Item"}),b=el("input",{value:r.h,placeholder:"0",inputMode:"decimal"}),q=el("input",{value:r.r,placeholder:"0",inputMode:"decimal"});
+a.oninput=()=>{r.i=a.value;save()};b.oninput=()=>{r.h=b.value;save()};q.oninput=()=>{r.r=q.value;save()};
+const x=el("button",{className:"x",textContent:"✕",title:"Delete row"});x.onclick=()=>{s.rows.splice(ri,1);save();render()};
+sec.append(el("div",{className:"row"},el("span",{className:"n",textContent:n}),a,b,q,x))});
+const ar=el("button",{className:"add",textContent:"+ Add row"});ar.onclick=()=>{s.rows.push({i:"",h:"",r:""});save();render();const ins=document.querySelectorAll(".sec")[si].querySelectorAll(".row:not(.cols) input");ins[ins.length-3].focus()};
+sec.append(ar);root.append(sec)})}
+$("addsec").onclick=()=>{S.push({name:"New Section",side:S.filter(z=>z.side==="L").reduce((a,z)=>a+z.rows.length,0)<=S.filter(z=>z.side==="R").reduce((a,z)=>a+z.rows.length,0)?"L":"R",rows:[{i:"",h:"",r:""}]});save();render();const all=document.querySelectorAll(".sh input");all[all.length-1].focus();all[all.length-1].select()};
+$("rs").onclick=()=>{if(confirm("Restore the original sections and items? Quantities will be cleared.")){S=def();save();render()}};
+const fd=v=>v?new Date(v+"T00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"";
+function lay(){const o={L:[],R:[]};let n=0;["L","R"].forEach(d=>{S.filter(s=>(s.side||"L")===d).forEach(s=>{o[d].push({t:"s",name:s.name});s.rows.filter(r=>r.i.trim()).forEach(r=>o[d].push({t:"i",i:r.i,h:r.h,r:r.r,n:++n}))})});return o}
+function buildPrint(){const L=lay(),m=Math.max(L.L.length,L.R.length),P=$("pr");P.textContent="";
+const top=el("div",{className:"top"},el("img",{src:"logo.png"}),el("b",{textContent:"By Focus Prism"}));P.append(top);
+const t=el("table");const cg=el("colgroup");[6,30,10,10,6,30,10,10].forEach(w=>cg.append(el("col",{style:"width:"+w+"%"})));t.append(cg);
+const th=el("thead");const mk=(cells)=>{const r=el("tr");cells.forEach(([txt,cls,sp])=>{const c=el("td",{className:cls||"",textContent:txt});if(sp)c.colSpan=sp;r.append(c)});return r};
+th.append(mk([["DATE OF REQUISITION  "+$("reqd").value,"pk",4],[$("dept").value,"pk c",4]]),mk([["Latest to Delivery  "+fd($("deld").value),"pk",8]]),mk([["S.No","bg"],["VEGETABLES","bg"],["Qty in Hand","bg"],["Qty Req.","bg"],["S.No","bg"],["ENGLISH VEGETABLES","bg"],["Qty In hand","bg"],["Qty Req.","bg"]]));t.append(th);
+const tb=el("tbody");for(let i=0;i<m;i++){const r=el("tr");[L.L[i],L.R[i]].forEach(x=>{if(!x){for(let k=0;k<4;k++)r.append(el("td"))}else if(x.t==="s"){const c=el("td",{className:"tl",textContent:x.name.toUpperCase()});c.colSpan=4;r.append(c)}else{r.append(el("td",{className:"c",textContent:x.n}),el("td",{textContent:x.i}),el("td",{textContent:x.h}),el("td",{textContent:x.r}))}});tb.append(r)}
+t.append(tb);P.append(t,el("div",{className:"ft",innerHTML:"<div>Approved By<br><b>Executive Chef</b></div>"}))}
+window.onbeforeprint=buildPrint;
+$("pt").onclick=()=>{buildPrint();try{window.print()}catch(e){toast("Printing is not available – use Export to Excel and print from Excel")}};
+$("xl").onclick=async()=>{const dl=DL;
+try{const L=lay(),m=Math.max(L.L.length,L.R.length);const wb=new ExcelJS.Workbook();
+const ws=wb.addWorksheet("Order Sheet",{pageSetup:{paperSize:9,orientation:"portrait",fitToPage:true,fitToWidth:1,fitToHeight:0,horizontalCentered:true,margins:{left:.3,right:.3,top:.4,bottom:.4,header:.2,footer:.2}}});
+ws.columns=[6,30,11,11,6,30,11,11].map(width=>({width}));
+const fill=c=>({type:"pattern",pattern:"solid",fgColor:{argb:"FF"+c}}),bd={style:"thin",color:{argb:"FF444444"}},B={top:bd,left:bd,bottom:bd,right:bd};
+const PK="D8A7C0",BG="DDD9C3",TL="CBDCE0";
+const row=(n,cells,f,bold,h)=>{const r=ws.getRow(n);if(h)r.height=h;for(let c=1;c<=8;c++){const x=r.getCell(c);if(cells[c-1]!==undefined)x.value=cells[c-1];x.border=B;if(f){x.fill=fill(f);}x.font={name:"Arial",size:10,bold:!!bold};x.alignment={vertical:"middle"}}return r};
+ws.mergeCells("A1:H1");row(1,["By Focus Prism"],PK,true,44);ws.getCell("A1").font={name:"Arial",size:16,bold:true};ws.getCell("A1").alignment={horizontal:"center",vertical:"middle"};
+const lg=wb.addImage({base64:logoData(),extension:"jpeg"});ws.addImage(lg,{tl:{col:.15,row:.1},ext:{width:52,height:52}});
+row(2,["DATE OF REQUISITION","","","","","","",""],PK,true,18);ws.mergeCells("A2:B2");ws.getCell("A2").value="DATE OF REQUISITION";ws.mergeCells("C2:D2");ws.getCell("C2").value=$("reqd").value;ws.mergeCells("E2:H2");ws.getCell("E2").value=$("dept").value;ws.getCell("E2").alignment={horizontal:"center"};ws.getCell("C2").alignment={horizontal:"center"};
+row(3,[],PK,true,18);ws.mergeCells("A3:B3");ws.getCell("A3").value="Latest to Delivery";ws.mergeCells("C3:D3");ws.getCell("C3").value=fd($("deld").value);ws.getCell("C3").alignment={horizontal:"center"};ws.mergeCells("E3:H3");
+const hr=row(4,["S.No","VEGETABLES","Qty in Hand","Qty Req.","S.No","ENGLISH VEGETABLES","Qty In hand","Qty Req."],BG,true,18);hr.alignment={horizontal:"center",vertical:"middle"};
+const num=v=>v===""||isNaN(+v)?v:+v;
+for(let i=0;i<m;i++){const n=5+i,r=row(n,[]);[[L.L[i],1],[L.R[i],5]].forEach(([x,c0])=>{if(!x)return;if(x.t==="s"){ws.mergeCells(n,c0,n,c0+3);const c=ws.getCell(n,c0);c.value=x.name.toUpperCase();c.alignment={horizontal:"center",vertical:"middle"};for(let k=0;k<4;k++){const q=ws.getCell(n,c0+k);q.fill=fill(TL);q.font={name:"Arial",size:10,bold:true};q.border=B}}else{ws.getCell(n,c0).value=x.n;ws.getCell(n,c0).alignment={horizontal:"center"};ws.getCell(n,c0+1).value=x.i;ws.getCell(n,c0+2).value=num(x.h);ws.getCell(n,c0+3).value=num(x.r)}})}
+const e=5+m+1;ws.getCell(e,1).value="______________________";ws.getCell(e+1,1).value="Approved By";ws.getCell(e+2,1).value="Executive Chef";ws.getCell(e+2,1).font={name:"Arial",size:10,bold:true};
+ws.pageSetup.printTitlesRow="1:4";
+const buf=await wb.xlsx.writeBuffer();
+await dl.save({filename:"Perishable-Order-"+$("deld").value+".xlsx",data:new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})});toast("Excel ready")}catch(e){if(e&&e.code!=="declined")toast("Could not save: "+(e.message||e.code))}};
+$("sv").onclick=async()=>{const dl=DL;
+try{await dl.save({filename:"Order-Form-"+$("deld").value+".json",data:new Blob([JSON.stringify({dept:$("dept").value,del:$("deld").value,S})],{type:"application/json"})});toast("Form saved")}catch(e){if(e&&e.code!=="declined")toast("Could not save: "+(e.message||e.code))}};
+$("ld").onclick=()=>$("lf").click();
+$("lf").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!Array.isArray(o.S))throw 0;S=o.S;S.forEach(norm);$("dept").value=o.dept||"MAIN KITCHEN";if(o.del)$("deld").value=o.del;save();render();toast("Form loaded")}catch(x){toast("That file is not a saved form")}};r.readAsText(f);e.target.value=""};
+render();
+</script></body></html>
